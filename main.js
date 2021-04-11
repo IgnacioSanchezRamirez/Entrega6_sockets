@@ -14,7 +14,7 @@ let server = net.createServer((socket) => {
     output: socket,
     prompt: "> "
   });
-  rl.log = (msg) => console.log(msg);  // Add log to rl interface
+  rl.log = (msg) => socket.write(msg + '\n');  // Add log to rl interface
   rl.questionP = function (string) {   // Add questionP to rl interface
     return new Promise ( (resolve) => {
       this.question(`  ${string}: `, (answer) => resolve(answer.trim()))
@@ -51,12 +51,12 @@ let server = net.createServer((socket) => {
       else                 {  rl.log('UNSUPPORTED COMMAND!');
                               user.help(rl);
                           };
-      } catch (err) { rl.log(`  ${err}`);}
-      finally       { console.log('*****en busca del error*****'); if('e' != cmd) {rl.prompt();} }
-    });
+    } catch (err) { rl.log(`  ${err}`);}
+    finally       { console.log('*****en busca del error*****'); if('e' != cmd) {rl.prompt();} }
+  });
 
-    socket.on('end', () =>{
-      console.log("Cliente desconectado", socket.remotePort);
+  socket.on('end', () =>{
+    console.log("Cliente desconectado", socket.remotePort);
   });
 });
 
